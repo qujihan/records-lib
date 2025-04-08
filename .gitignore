@@ -1,0 +1,6 @@
+.DS_Store
+.cache
+build/
+output/
+*.pdf
+typst*
