@@ -20,4 +20,4 @@ build: submodules
 
 clean:
 	@echo "Cleaning..."
-	@bash ./scripts/clean.sh || echo "\033[0;31m Error: Failed to clean"
+	@git clean -f -X -d || echo "\033[0;31m Error: Failed to clean"
