@@ -1,0 +1,9 @@
+{
+    "tinymist.previewFeature": "enable",
+    "tinymist.outputPath": "${fileWorkspaceFolder}/example.pdf",
+    "tinymist.rootPath": "${fileWorkspaceFolder}",
+    "[typst]": {
+        "editor.wordWrap": "bounded",
+        "editor.wordWrapColumn": 100,
+    },
+}
