@@ -22,4 +22,4 @@
 #include "src/8附录.typ"
 #include "src/9致谢附录参考文献.typ"
 #set text(lang: "en")
-#bibliography("ref.bib", title: "参考文献", full: true, style: "ieee")
+#bibliography("ref.bib", title: "参考文献", full: true, style: "gb-7714-2015-numeric")
