@@ -1,16 +1,17 @@
 #import "../lib.typ":*
 
 = 可扩展的查询优化器<可扩展的查询优化器>
-构建一个可以扩展的查询优化器的方式之一是拥有一组可以扩展的_规则_，这个规则用于定义所有等效的计划的空间。正如@介绍\中所提及的，这种方法以逻辑算子、物理算子以及一系列的_转换（transformation）_和_实现规则（implementation
+构建一个可以扩展的查询优化器的方式之一是拥有一组可以扩展的_规则（rule）_，这个规则用于定义所有等效的计划的空间。正如@介绍\中所提及的，这种方法以逻辑算子、物理算子以及一系列的_转换（transformation）_和_实现规则（implementation
 rules）_的概念为中心。优化器在_搜索策略（search
 strategy）_的指导下，按照一定的顺序应用规则（rules），在等效的计划空间内探索，并且在众多备选计划空间中选择一个高效的计划。
 
-在这一章中，我们首先介绍一个扩展的优化器的概念（@可扩展的查询优化器基本概念）。然后我们深入讨论两个可以扩展的优化器框架：Volcano框架以及Cascades框架。我们从介绍Volcano以及其搜索开始（@volcano）,然后我们简单的看下Volcano的局限性，正因其局限性，催生了其后来者，Cascades框架（@cascades）。我们介绍了在实践中用于提高Volcano和Cascades效率的其他优化以及启发式方法（@提高查询效率的技术）。为了说明可扩展的查询优化器如何轻松的将新功能合并高查询处理中，我们介绍了Microsoft
-SQL Server的优化器是如何利用/*TODO*/来实现列存的（@Microsoft-SQL-Server的扩展性示例）。在本章的最后，我们将介绍可扩展的查询优化器是如何生成多核并行以及分布式的查询（@并行分布式查询流程）。
+在这一章中，我们首先介绍一个扩展的优化器的概念（@可扩展的查询优化器基本概念）。然后我们深入讨论两个可以扩展的优化器框架：Volcano框架以及Cascades框架。我们从介绍Volcano以及其搜索开始（@volcano）,然后我们简单的看下Volcano的局限性，正因其局限性，催生了其后来者，Cascades框架（@cascades）。我们介绍了在实践中用于提高Volcano和Cascades效率的其他优化以及启发式方法（@提高查询效率的技术）。为了说明可扩展的查询优化器如何轻松的将新功能合并到查询处理中，我们介绍了Microsoft
+SQL
+Server的优化器是如何利用Cascades框架的可扩展性来实现列存的（@Microsoft-SQL-Server的扩展性示例）。在本章的最后，我们将介绍可扩展的查询优化器是如何生成多核并行以及分布式的查询（@并行分布式查询流程）。
 
 == 基本概念<可扩展的查询优化器基本概念>
 
-我们在基于规则的（rule-based）的可扩展优化器（例如Volcano以及Cascades。）中介绍了一些重要的概念。但是需要注意，这些概念（例如：算子operators、属性properties）并不是Volcano/Cascades中所独有的概念，它们被用于System
+我们在基于规则的（rule-based）的可扩展优化器（Volcano/Cascades）中介绍了一些重要的概念。但是需要注意，这些概念（例如：算子operators、属性properties）并不是Volcano/Cascades中所独有的概念，它们也被用于System
 R、Starburst以及EXODUS等系统的查询优化器中。
 
 看一下@query2，其相应的逻辑以及物理计划在@query2的逻辑以及物理计划\中。
@@ -53,7 +54,7 @@ plan）_或者简称为_计划（plan）_。例如表达式$P_1:italic("HashJoin
     + for $italic("rule")$ in $italic("Rules")$ do
       + if $italic("rule")$ matches $italic("LogExpr")$ then
         + $italic("NewLogExpr") arrow.l italic("Transform(LogExpr, rule)")$ #sym.triangle.stroked.r 更新memo并且记录其邻居
-        + $italic("GenerateLogicalExpr(NewLogExpr)")$ 
+        + $italic("GenerateLogicalExpr(NewLogExpr)")$
         + #sym.triangle.stroked.r 只会在$italic("NewLogExpr")$在memo中不存在的时候才会执行
 ]
 === 自定义查询策略

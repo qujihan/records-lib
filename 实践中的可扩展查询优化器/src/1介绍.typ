@@ -101,7 +101,11 @@ views）@Materialized-Views@Materialized-views-techniques-implementations-and-ap
 幸运的是，随着SQL查询优化器的实际要求在不断地扩展，关于可以扩展的数据库系统的研究为扩展System
 R架构提高来替代方案。可扩展的数据库系统被能够根据应用的需求定制数据库系统。具体的来说，Exodus@The-EXODUS-extensible-DBMS-project-an-overview\以及后来的Volcano@Volcano---An-Extensible-and-Parallel-Query-Evaluation-System\（可以支持用户指定的查询执行算子）都是在这种背景下出现的。由于需要支持自定义的算子，所以提供可扩展的查询优化器框架成为了必然。因此，优化器的可扩展性一开始就是Volcano的特性。并且Volcano最初被设想为“用于多种目的的实验工具”@Volcano---An-Extensible-and-Parallel-Query-Evaluation-System\。它允许架构师从专家系统（产生式系统）中获取灵感，设计可插拔一个新的_规则（rules）_，从而扩展优化器的功能。后来，Volcano/Cascades@The-Cascades-Framework-for-Query-Optimization@The-Volcano-Optimizer-Generator--Extensibility-and-Efficient-Search\和Starburst@Grammar-like-functional-rules-for-representing-query-optimization-alternatives@Grammar-like-functional-rules-for-representing-query-optimization-alternatives-2@A-Rule-Engine-for-Query-Transformation-in-Starburst-and--IBM---DB2\等可扩展的优化器框架将SQL查询优化作为了核心的应用场景，这满足了SQL查询优化对新架构的迫切要求。
 
-在本文的大部分内容中，我们都将聚焦于Volcano/Cascades的可扩展优化器。这些可扩展的优化框架都围绕规则（rules）这个概念展开。_逻辑转换规则（logical transformation rule）_表示的是SQL（或者是关系代数）的等价关系。例如前面提到的Join的交换律以及结合率所蕴含的等价关系就可以通过规则来表达。类似，一条规则可以定义将Group-by下推到Join下的等价关系。对一个查询树应用逻辑转换规则可以生成一个等价的查询树。_实现规则（implementation rule）_定义了逻辑算子（例如Join）到物理算子（例如Hash Join）的映射。要为查询生成一个执行计划，就需要用到实现规则。合理的选择一系列规则的应用方式，就可以将查询树转换一个高效的执行计划。有一点需要注意，在这种架构下，每次引入一个新的算子、逻辑转换以及实现规则的时候，无须修改优化器的搜索算法。但是必须注意到，转换并不一定会降低成本，因此搜索算法必须以基于成本的方式在各种替代方案中选择。
+在本文的大部分内容中，我们都将聚焦于Volcano/Cascades的可扩展优化器。这些可扩展的优化框架都围绕规则（rules）这个概念展开。_逻辑转换规则（logical
+transformation
+rule）_表示的是SQL（或者是关系代数）的等价关系。例如前面提到的Join的交换律以及结合率所蕴含的等价关系就可以通过规则来表达。类似，一条规则可以定义将Group-by下推到Join下的等价关系。对一个查询树应用逻辑转换规则可以生成一个等价的查询树。_实现规则（implementation
+rule）_定义了逻辑算子（例如Join）到物理算子（例如Hash
+Join）的映射。要为查询生成一个执行计划，就需要用到实现规则。合理的选择一系列规则的应用方式，就可以将查询树转换一个高效的执行计划。有一点需要注意，在这种架构下，每次引入一个新的算子、逻辑转换以及实现规则的时候，无须修改优化器的搜索算法。但是必须注意到，转换并不一定会降低成本，因此搜索算法必须以基于成本的方式在各种替代方案中选择。
 
 SQL是一个声明式的查询语言，这允许查询优化器为SQL查询创建一个高效的执行计划。这些执行计划既保持了语义等价的逻辑转换，又能聪明的为逻辑算子选择高效的实现方式。查询优化的终极目标就是生成语义等价的、与用户/应用无关的，高效的，执行计划。可扩展的优化器通过引入规则，对查询树依次应用规则，并且在基于成本的搜索算法的驱动下，达成这个目标。
 
@@ -137,3 +141,8 @@ SQL Server为例来说明这些概念以及技术。
 )，我们鼓励读者发现错误后通过邮件向我们报告错误。
 
 == 建议阅读
+
+- Access Path Selection in a Relational Database Management
+  System@Access-Path-Selection-in-a-Relational-Database-Management-System\
+- Query Evaluation Techniques for Large Databases@Query-Evaluation-Techniques-for-Large-Databases
+- An Overview of Query Optimization in Relational Systems@An-overview-of-query-optimization-in-relational-systems
