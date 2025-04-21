@@ -6,4 +6,10 @@
         "editor.wordWrap": "bounded",
         "editor.wordWrapColumn": 100,
     },
+    "trae.enableCodelens": {
+        "enableInlineDocumentation": false,
+        "enableInlineUnitTest": false,
+        "enableInlineExplain": false
+    },
+    "trae.enableInlineCommand": false
 }
