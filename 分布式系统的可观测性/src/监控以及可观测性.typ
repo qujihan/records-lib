@@ -108,10 +108,8 @@ Rate）和请求持续时间（*D*\uration of Request）（通常通过直方图
 当一个不可观测的系统以一种无法监控的方式出现故障的时候，其调试被证明是不可能的。
 
 === 可观测性并非灵丹妙药
-
-#ref([
-  Brian Kernighan在1979年写的《#text(style: "italic")[Unix for Beginners]》中提到过：
-])[
+Brian Kernighan在1979年写的《#text(style: "italic")[Unix for Beginners]》中提到过：
+#ref("")[
   最有效的调试工具仍然是仔细的思考，配合明智的放置打印语句。
 ]
 
