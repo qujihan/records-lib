@@ -1,7 +1,7 @@
 
 #import "../lib.typ":*
 = 编码以及测试的可观测性
-
+#picture-figure("", image("pic/three_phases_of_testing_in_production.png"))
 == 面向故障的编码
 
 
