@@ -2,7 +2,7 @@
 
 #set text(lang: "zh")
 #show: book.with(info: (
-  title: "性能忍者",
+  title: "性能忍者（C++性能调优）小手册",
   author: "渠继涵",
   latin-font: "Lora",
   cjk-font: "Noto Serif CJK SC",
