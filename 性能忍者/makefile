@@ -1,4 +1,4 @@
-file_name := "example.pdf"
+file_name := "性能忍者（C++性能调优）小册子.pdf"
 
 .PHONY: w c
 
