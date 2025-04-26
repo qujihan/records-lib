@@ -40,9 +40,7 @@
 
 === Metrics的缺点
 
-
 == Traces
-
 
 == Traces的挑战
 === Service Meshes：未来的新希望
