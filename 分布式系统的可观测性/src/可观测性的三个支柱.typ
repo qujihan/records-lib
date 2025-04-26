@@ -12,6 +12,7 @@
   "表示为span的trace：span A是根span，span B是span A的子项",
   image("pic/trace_represented_as_spans.png", height: 50%),
 )
+
 == Logs
 
 === 时间日志（Event Logs）
