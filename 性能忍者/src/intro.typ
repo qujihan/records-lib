@@ -31,25 +31,16 @@ echo "Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg" >> /etc/apt/sou
 
 # 安装依赖
 export DEBIAN_FRONTEND=noninteractive
-apt update; apt install -y curl wget git ninja-build make cmake lsb-release software-properties-common gnupg
-wget https://apt.llvm.org/llvm.sh
-chmod +x llvm.sh
-./llvm.sh 17 all
+apt update && apt install -y curl wget git ninja-build make cmake lsb-release software-properties-common gnupg
 
-# 设置 clang 为默认编译器
+# 安装 llvm17 并且设置默认编译器为 clang17/clang++17
+wget https://apt.llvm.org/llvm.sh && chmod +x llvm.sh
+./llvm.sh 17 all
 update-alternatives --install /usr/bin/cc cc /usr/bin/clang-17 30
 update-alternatives --install /usr/bin/c++ c++ /usr/bin/clang++-17 30
 
-# 安装 google benchmark
-git clone git@github.com:google/benchmark.git; cd benchmark;
-git checkout v1.9.2
-cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -DBENCHMARK_DOWNLOAD_DEPENDENCIES=on -G Ninja
-cmake --build build --config Release --target install
-
 # 下载代码
-cd; git clone git@github.com:dendibakh/perf-ninja.git
-# 进入相应的 Lab 目录
-# cd labs/core_bound/compiler_intrinsics_1/
-cmake -B build -S . -G Ninja; cmake --build build
+cd; git clone git@github.com:dendibakh/perf-ninja.git; cd perf-ninja
+bash tools/make_benchmark_library.sh
 ```
 ])
