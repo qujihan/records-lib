@@ -1,4 +1,5 @@
-#import "../book-template/book.typ":*
+#import "../book-template/book.typ": *
+#import "@preview/muchpdf:0.1.0": muchpdf
 
 #let darken-red-text(body) = {
   text(fill: red.darken(40%), body)
@@ -34,7 +35,12 @@
   let ref-color = black.darken(15%)
   showybox(
     title-style: (weight: 900, color: ref-color.darken(40%), sep-thickness: 0pt, align: center),
-    frame: (title-color: ref-color.lighten(80%), border-color: ref-color.darken(40%), thickness: (left: 1pt), radius: 0pt),
+    frame: (
+      title-color: ref-color.lighten(80%),
+      border-color: ref-color.darken(40%),
+      thickness: (left: 1pt),
+      radius: 0pt,
+    ),
     title: title,
     ..body,
   )

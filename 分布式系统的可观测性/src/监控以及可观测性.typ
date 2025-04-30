@@ -1,16 +1,17 @@
-#import "../lib.typ":*
+#import "../lib.typ": *
 
 = 监控以及可观测性
 
 如果不将可观测性与监控进行对比，就无法全面的讨论可观测性。可观测性并非监控的替代品，也不会消除对监控的需求。二者是相辅相成的。如@testing-monitoring-observablity\所示，监控与可观测性的目标有所不同。
 
-#picture-figure([
-  可观测性是监控以及测试的超集。它提供了无法通过监控或者测试来检测的，不可预测的故障模式的信息。
-], image("pic/testing-monitoring-observability.png", width: 70%))<testing-monitoring-observablity>
+#picture-figure(
+  [
+    可观测性是监控以及测试的超集。它提供了无法通过监控或者测试来检测的，不可预测的故障模式的信息。
+  ],
+  image("pic/testing-monitoring-observability.png", width: 70%),
+)<testing-monitoring-observablity>
 
-#note(
-  [（译者注）对@testing-monitoring-observablity\的一些解读],
-)[
+#note([（译者注）对@testing-monitoring-observablity\的一些解读])[
   整个蓝色部分是指所有可能的完全或者部分故障的排列组合。（All possible permutations of full and partial failure）
 
   测试（Testing）位于左侧圆圈，图中意思是：测试主要是验证系统的正确性。
@@ -42,9 +43,7 @@
 
 随着系统变得愈发分布式，复杂的工具以及平台应运而生。这些工具以及平台能够抽象解决过去以人和故障为中心的监控所帮助发现的各种问题。例如健康检查、负载均衡以及将故障的服务从轮询中移除等功能。这些都是Kubernetes开箱即用的能力，运维人员无须受到这些故障的告警。
 
-#note(
-  "黑盒以及白盒监控",
-)[
+#note("黑盒以及白盒监控")[
   传统的大部分告警都是来自黑盒监控。_黑盒监控（Blackbox
   monitoring）_是指从外部观察系统，例如Nagios这样的检查。这类监控有利于识别问题的_表象（symptoms）_，例如错误率上升或者DNS解析失败，但是无法定位分布式系统中的各个组件导致这些表象的触发根本因素。
 
