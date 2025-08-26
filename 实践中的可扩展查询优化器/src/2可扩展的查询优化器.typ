@@ -63,7 +63,7 @@ _转换规则（transformation rule）_会将一个逻辑表达式重写为另�
 
 == Volcano<volcano>
 === 简介
-正如文献@Volcano---An-Extensible-and-Parallel-Query-Evaluation-System @The-Volcano-Optimizer-Generator--Extensibility-and-Efficient-Search\所描述的，Volcano是一个可扩展的基于规则的优化器框架。它提出了几个核心概念，包括表达式的物理属性和强制执行器（这是对System R中的interesting order的一种泛化）、_Mono（备忘录）_以及基于动态规划的自顶向下的搜索算法（这种算法利用_承诺（promise）_这个概念来确定下一步的动作，利用_引导（guidance）_来控制所要探索的搜索空间）。在@可扩展的查询优化器基本概念\这一章节我们了解了可扩展的查询优化器的基本概念。下面，我们将会详细的描述Volcano的_搜索（search）_以及_备忘录（mono）_机制。
+正如文献@Volcano---An-Extensible-and-Parallel-Query-Evaluation-System @The-Volcano-Optimizer-Generator--Extensibility-and-Efficient-Search\所描述的，Volcano是一个可扩展的基于规则的优化器框架。它提出了几个核心概念，包括表达式的物理属性和强制执行器（这是对System R中的interesting order的一种泛化）、_Meno（备忘录）_以及基于动态规划的自顶向下的搜索算法（这种算法利用_承诺（promise）_这个概念来确定下一步的动作，利用_引导（guidance）_来控制所要探索的搜索空间）。在@可扩展的查询优化器基本概念\这一章节我们了解了可扩展的查询优化器的基本概念。下面，我们将会详细的描述Volcano的_搜索（search）_以及_备忘录（meno）_机制。
 
 *搜索策略 Search strategy* Volcano将其搜索分成两个阶段：_生成阶段（Generate phase）_以及_代价分析阶段（Cost analysis phase）_。在生成阶段，优化器将会在转换规则集合中生成所有可以替代的等价的逻辑表达式。在成本分析阶段，他会为第一个阶段生拆而逻辑表达式生成物理执行计划，并且返回原始查询的最佳计划，也就是所有枚举的计划中，成本最低的那一个。
 
@@ -71,17 +71,32 @@ _转换规则（transformation rule）_会将一个逻辑表达式重写为另�
 
 在整个搜索的过程中，Volcano会记住推导出来的逻辑表达式和物理表达式，并将它们缓存在一个名为`Momo`的数据结构中，以避免冗余计算。接下来我们会详细说明`Momo`这个数据结构。
 
-*备忘录（Momo）*
+*备忘录（Momo）* `Momo`简洁的表达了大量的运算符树，它将在搜索过程优化过的逻辑表达式以及物理表达式都缓存下载。为了避免重复的缓存，Volcano将逻辑表达式与物理子计划分开，把等效的逻辑表达式和物理计划存储在不同的对象中。在Memo中，每一类等效的表达式都被称为_等价类（equivalent class）_或者_组（group）_。该类中所有的等价表达式都被称为_组表达式（group expressions）_或者简称为_表达式（expressions）_。一个组代表所有能产生相同输出的等价的运算符树。例如在@memo-example\中，展示了$A join B$的Memo，它包含三个组$"g1":"Join(A,B)"$、$"g2":A$以及$"g3":B$。表达式是一个以组为子节点的运算符（而不是以操作符为子节点），每个表达式既可以是逻辑表达式，也可以是物理表达式。
 
+逻辑表达式以逻辑运算符为根节点，以组为输入。例如@memo-example\中的$e_1:"Join(g2, g3)"$，就是以$"g2"$组和$"g3"$组为输入的逻辑表达式。
+
+物理表达式以物理运算符为根节点，其输入也是组。例如@memo-example\中的$e_6:"TableScan(A)"$是$"g2"$组的一个物理表达式，而$e_3:"Hash Join(g2, g3)"$是$"g1"$组的一个物理表达式。
 
 #picture-figure(
   [
-    以$A join B$为例的`Mono`示例，其中表B有可以使用的索引
+    以$A join B$为例的`Meno`示例，其中表B有可以使用的索引
     #linebreak()
-    蓝色标注的是逻辑表达式 / 物理表达式和组都标注了相应的最佳计划的成本
+    #align(center)[
+      蓝色标注的是逻辑表达式 / 物理表达式和组都标注了相应的最佳计划的成本
+    ]
   ],
   image("../pic/2_3.png"),
 )<memo-example>
+
+在@可扩展的查询优化器基本概念\一节中提到过，每一个表达式都关联这一些逻辑属性（例如基数）和物理属性（例如排序）等信息。这些信息就存储在Memo中。我们在接下来会提到Microsoft SQL Server中额外的物理属性。正是这些额外的物理属性，Microsoft SQL Server能够在并行以及分布式计划中做一些优化（@并行分布式查询流程）。以及对包含行模式以及批量模式的运算符的计划进行一些优化，这些优化的对列存的数据至关重要（@Microsoft-SQL-Server的扩展性示例）
+
+在Volcano的搜索算法中，Memo有多种用途。
+
+在生成阶段，
+
+在代价估计阶段，
+
+在@volcano-search\中，我们会详细的描述查询以及Memo的细节。
 
 === 查询<volcano-search>
 
@@ -90,7 +105,7 @@ _转换规则（transformation rule）_会将一个逻辑表达式重写为另�
   #set text(size: 0.8em)
   #algorithm-code(
     [
-      在Volcano优化器中查询，在`GenerateLogicalExpr`、`MatchTransRule`、`UpdatePlan`这几个操作中，_备忘录（Mono）_中的组和表达式会被更新。随着搜索结果的推进，表达式的成本的限制也会被更新。在`FindBestPlan`操作结束以后，搜索得到的缓存结果会被添加到Mono中。
+      在Volcano优化器中查询，在`GenerateLogicalExpr`、`MatchTransRule`、`UpdatePlan`这几个操作中，_备忘录（Meno）_中的组和表达式会被更新。随着搜索结果的推进，表达式的成本的限制也会被更新。在`FindBestPlan`操作结束以后，搜索得到的缓存结果会被添加到Meno中。
     ],
   )[
     + function GenerateLogicalExpr$italic("(LogExpr, Rules)")$ #sym.triangle.stroked.r
