@@ -39,7 +39,7 @@ $P_1: "HashJoin(TableScan(A), TableScan(B))"$
 
 $P_2: "NestedLoopsJoin(TableScan(A), TableScan(B))"$
 
-*规则Rules* 
+*规则Rules*
 
 == Volcano<volcano>
 
@@ -51,18 +51,37 @@ $P_2: "NestedLoopsJoin(TableScan(A), TableScan(B))"$
     在Volcano优化器中查询，在`GenerateLogicalExpr`、`MatchTransRule`、`UpdatePlan`这几个操作中，_备忘录（Mono）_中的组和表达式会被更新。随着搜索结果的推进，表达式的成本的限制也会被更新。在`FindBestPlan`操作结束以后，搜索得到的缓存结果会被添加到Mono中。
   ],
 )[
-  + function GenerateLogicalExpr$italic("(LogExpr, Rules)")$ #sym.triangle.stroked.r
+  //  生成逻辑表达式
+  + function GenerateLogicalExpr$italic("(LogExpr, Rules)")$
     + for $italic("Child")$ in inputs of $italic("LogExpr")$
       + if $italic("Group(Child)") in.not italic("Memo")$ then
         + $italic("GererateLogicalExpr(Child)")$
     + $italic("MatchTransRules(LogExpr, Rules)")$
 
+  // 
   + function MatchTransRule$italic("LogExpr, Rules")$
     + for $italic("rule")$ in $italic("Rules")$ do
       + if $italic("rule")$ matches $italic("LogExpr")$ then
-        + $italic("NewLogExpr") arrow.l italic("Transform(LogExpr, rule)")$ #sym.triangle.stroked.r 更新memo并且记录其邻居
-        + $italic("GenerateLogicalExpr(NewLogExpr)")$
-        + #sym.triangle.stroked.r 只会在$italic("NewLogExpr")$在memo中不存在的时候才会执行
+        + $italic("NewLogExpr") arrow.l italic("Transform(LogExpr, rule)")$ $triangle.r$ 更新memo并且记录其邻居
+        + $italic("GenerateLogicalExpr(NewLogExpr)")$ $triangle.r$ 只会在$italic("NewLogExpr")$在memo中不存在的时候才会执行
+
+  // 
+  + function FindBestPlan$italic("(LogExpr, PhyProp, Limit)")$ $triangle.r$ 代价分析阶段
+    + if $italic("(LogExpr, PhyProp)")$ in the $italic("Memo")$ then
+      + $italic("Plan, Cost") arrow.l italic("LookUpBestPlan(LogExpr, PhyProp)")$
+      + if $italic("Cost") eq.not italic("null") "and" italic("Cost") lt.eq italic("Limit")$ then
+        + return $italic("Plan, Cost")$
+      + else
+        + return $italic("null, null")$ $triangle.r$ 之前的尝试中并没有这种计划
+      + $italic("MarkInProgress(LogExpr, PhyProp)")$ $triangle.r$ 优化一个新的表达式
+      + $italic("Moves") arrow.l italic("GetAllMoves(LogExpr, PhyProp)")$ $triangle.r$ 生成所有的转换，可能会采用启发式的方式
+      + $italic("SortedMoves") arrow.l italic("SortMovesByPromise(Moves)")$
+      + $italic("BestPlan") arrow.l italic("null")$
+      + $italic("BestCost") arrow.l infinity$
+      + for $italic("m") in italic("SortedMoves")$ do
+        + if $italic("m")$ is a transformation rule then
+          + for $italic("NewLogExpr")$ in
+
 ]
 === 自定义查询策略
 === 添加新的规则以及运算符
